@@ -4,9 +4,9 @@ import datetime
 
 from werobot.client import Client, ClientException
 from werobot.robot import BaseRoBot
-from werobot.session.memorystorage import MemoryStorage
+from werobot.session.filestorage import FileStorage
 from werobot.logger import enable_pretty_logging
-from werobot.reply import create_reply
+from wechatpy.replies import create_reply
 
 import odoo
 from odoo import exceptions
@@ -119,7 +119,7 @@ class WxEntry(EntryBase):
             if from_ui:
                 raise exceptions.UserError(u'对接失败，请检查相关信息是否填写正确')
 
-        session_storage = MemoryStorage()
+        session_storage = FileStorage()
         robot = WeRoBot(token=self.wx_token, enable_session=True, logger=_logger, session_storage=session_storage)
         enable_pretty_logging(robot.logger)
         self.robot = robot

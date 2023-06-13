@@ -86,21 +86,22 @@ class WxController(http.Controller):
             elif msg.event=='scan':
                 from .handlers.sys_event import scan
                 ret = scan(request, msg)
-            elif msg.event=='unsubscribe':
+            elif msg.event == 'unsubscribe':
                 from .handlers.sys_event import unsubscribe
                 ret = unsubscribe(request, msg)
-            elif msg.event=='view':
+            elif msg.event == 'view':
                 from .handlers.sys_event import url_view
                 ret = url_view(request, msg)
-            elif msg.event=='click':
+            elif msg.event == 'click':
                 from .handlers.menu_click import onclick
                 ret = onclick(request, msg)
         elif msg.type == 'unknown':
             _ret = self.handle_unknown(msg)
             if _ret:
                 ret = _ret
-
+        _logger.info("ret %s" % ret)
         if type(ret) in [type(u''), type(b'')]:
+            _logger.info("ret 1", ret)
             reply = create_reply(ret, msg)
         else:
             reply = ret

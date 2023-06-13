@@ -4,7 +4,8 @@ import time
 import requests
 
 
-from requests.compat import json as _json
+# from requests.compat import json as _json
+import json as _json
 from werobot.utils import to_text
 
 

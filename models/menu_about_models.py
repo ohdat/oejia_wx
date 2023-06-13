@@ -74,6 +74,7 @@ class wx_menu(models.Model):
     _order = 'sequence'
 
     def _get_menu_action(self, name, action):
+        _logger.info("action %s" % action)
         if action and action._name=='wx.action.act_url':
             m_dict = {
                       'type': 'view',
