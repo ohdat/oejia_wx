@@ -26,6 +26,7 @@ class WxController(http.Controller):
 
     @http.route('/wx_handler', type='http', auth="none", methods=['GET', 'POST'], csrf=False)
     def handle(self, **kwargs):
+        wx_login = False
         entry = wx_client.wxenv(request.env)
         request.entry = entry
         self.crypto = entry.crypto_handle
@@ -79,11 +80,15 @@ class WxController(http.Controller):
             if _ret:
                 ret = _ret
         elif msg.type == 'event':
+            # if msg.event in ["subscribe", "subscribe_scan"]:
+            #     wx_login = True
             # ['subscribe', 'unsubscribe', 'subscribe_scan', 'scan', 'location', 'click', 'view', 'masssendjobfinish', 'templatesendjobfinish', 'scancode_push', 'scancode_waitmsg', 'pic_sysphoto', 'pic_photo_or_album', 'pic_weixin', 'location_select']
             if msg.event in ['subscribe', 'subscribe_scan']:
+                wx_login = True
                 from .handlers.sys_event import subscribe
                 ret = subscribe(request, msg)
             elif msg.event=='scan':
+                wx_login = True
                 from .handlers.sys_event import scan
                 ret = scan(request, msg)
             elif msg.event == 'unsubscribe':
@@ -95,13 +100,21 @@ class WxController(http.Controller):
             elif msg.event == 'click':
                 from .handlers.menu_click import onclick
                 ret = onclick(request, msg)
+
+            if wx_login:
+                from ..grpc_clt import sub_login
+                login_data = sub_login.send_sub_login("192.168.0.102:4040", msg)
+                if not ret and login_data and login_data.OK:
+                    from .handlers.sys_event import subscribe
+                    ret = subscribe(request, msg)
+                # grpc 登录 逻辑
         elif msg.type == 'unknown':
             _ret = self.handle_unknown(msg)
             if _ret:
                 ret = _ret
         _logger.info("ret %s" % ret)
         if type(ret) in [type(u''), type(b'')]:
-            _logger.info("ret 1", ret)
+            # _logger.info("ret 1", ret)
             reply = create_reply(ret, msg)
         else:
             reply = ret
