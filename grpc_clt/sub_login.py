@@ -18,7 +18,7 @@ def send_sub_login(address, msg):
     _logger.info("msg.type %s" % msg.type)
     _logger.info("msg.event %s" % msg.event)
     _logger.info("msg.key %s" % key)
-    _logger.info("msg.ticket %s" %  msg.ticket)
+    _logger.info("msg.ticket %s" % msg.ticket)
     req = wx_admin_pb2.SubscribeScanLoginRequest(
         ToUserName=msg.target,
         FromUserName=msg.source,

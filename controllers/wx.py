@@ -103,7 +103,11 @@ class WxController(http.Controller):
 
             if wx_login:
                 from ..grpc_clt import sub_login
-                login_data = sub_login.send_sub_login("192.168.0.102:4040", msg)
+                if msg.target == 'gh_7a96b3e66a6c':
+                    grpc_address = "grpc-trade:8080"
+                else:
+                    grpc_address = "dev-grpc-trade:8080"
+                login_data = sub_login.send_sub_login(grpc_address, msg)
                 if not ret and login_data and login_data.OK:
                     from .handlers.sys_event import subscribe
                     ret = subscribe(request, msg)
