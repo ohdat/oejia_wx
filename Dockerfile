@@ -1,4 +1,4 @@
-FROM bitnami/odoo:16.0.20230515-debian-11-r3
+FROM bitnami/odoo:13.0.20221010-debian-11-r5
 COPY ./requirements.txt .
 RUN pip3 install -r requirements.txt
 RUN apt-get -y update
